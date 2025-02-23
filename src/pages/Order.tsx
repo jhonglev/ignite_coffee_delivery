@@ -2,8 +2,24 @@ import location from "@/assets/order-confirmed-location.png";
 import clock from "@/assets/order-confirmed-clock.png";
 import money from "@/assets/order-confirmed-money.png";
 import deliveryMan from "@/assets/delivery-man.png";
+import { useContext } from "react";
+import { OrderContext } from "@/contexts/order";
 
-export const OrderConfirmed = () => {
+export const Order = () => {
+  const { orderData } = useContext(OrderContext);
+
+  const returnPaymentMethodDescription = (paymentMethod: string) => {
+    switch (paymentMethod) {
+      case "credit":
+        return "Cartão de Crédito";
+      case "debit":
+        return "Cartão de débito";
+      case "money":
+        return "Dinheiro";
+      default:
+        return "";
+    }
+  };
   return (
     <div className="grid grid-cols-2">
       <div className="col-span-1">
@@ -20,9 +36,10 @@ export const OrderConfirmed = () => {
               <span className="ml-2">
                 Entrega em{" "}
                 <span className="font-semibold">
-                  Rua João Daniel Martinelli, 102
+                  {orderData.street}, {String(orderData.number)}
                 </span>
-                <br></br> Farrapos - Porto Alegre, RS
+                <br></br> {orderData.neighborhood} - {orderData.city},{" "}
+                {orderData.state}
               </span>
             </div>
             <div className="flex items-center">
@@ -38,7 +55,10 @@ export const OrderConfirmed = () => {
               <span className="ml-2">
                 Pagamento na entrega
                 <br></br>
-                <span className="font-semibold"> Cartão de Crédito</span>
+                <span className="font-semibold">
+                  {" "}
+                  {returnPaymentMethodDescription(orderData.paymentMethod)}
+                </span>
               </span>
             </div>
           </div>

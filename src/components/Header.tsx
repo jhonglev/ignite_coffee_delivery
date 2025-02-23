@@ -4,9 +4,15 @@ import location from "@/assets/location.png";
 import cart from "@/assets/cart.png";
 import { useContext } from "react";
 import { CartContext } from "@/contexts/cart";
+import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
   const { totalNumberOfProducts } = useContext(CartContext);
+  const navigate = useNavigate();
+
+  const handleCartClick = () => {
+    if (totalNumberOfProducts > 0) navigate("/checkout");
+  };
   return (
     <div className="flex items-center justify-between w-full h-[104px] bg-[#FAFAFA] mb-20">
       <Button variant="ghost">
@@ -21,7 +27,10 @@ export const Header = () => {
           Porto Alegre, RS
         </Button>
         <div className="flex">
-          <Button className="bg-[#F1E9C9] hover:bg-[#F1E9C9]/90 p-2">
+          <Button
+            className="bg-[#F1E9C9] hover:bg-[#F1E9C9]/90 p-2"
+            onClick={handleCartClick}
+          >
             <img src={cart} />
           </Button>
           {totalNumberOfProducts > 0 && (

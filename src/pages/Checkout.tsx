@@ -21,6 +21,8 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PatternFormat } from "react-number-format";
+import { OrderContext } from "@/contexts/order";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   postalCode: z.string().min(1, { message: "CEP é obrigatório." }),
@@ -33,7 +35,42 @@ const formSchema = z.object({
   complement: z.string().optional(),
   neighborhood: z.string().min(1, { message: "Bairro é obrigatório." }),
   city: z.string().min(1, { message: "Cidade é obrigatória." }),
-  state: z.string().min(1, { message: "UF é obrigatória." }),
+  state: z
+    .enum(
+      [
+        "AC",
+        "AL",
+        "AP",
+        "AM",
+        "BA",
+        "CE",
+        "DF",
+        "ES",
+        "GO",
+        "MA",
+        "MT",
+        "MS",
+        "MG",
+        "PA",
+        "PB",
+        "PR",
+        "PE",
+        "PI",
+        "RJ",
+        "RN",
+        "RS",
+        "RO",
+        "RR",
+        "SC",
+        "SP",
+        "SE",
+        "TO",
+      ],
+      { message: "UF inválida." }
+    )
+    .refine((value) => value, {
+      message: "UF é obrigatória.",
+    }),
   paymentMethod: z.enum(["credit", "debit", "money"]).refine((value) => value, {
     message: "Forma de pagamento é obrigatória.",
   }),
@@ -42,7 +79,9 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 export const Checkout = () => {
+  const { setOrderData } = useContext(OrderContext);
   const { items, totalValue } = useContext(CartContext);
+  const navigate = useNavigate();
 
   const cartItems = items.filter((item) => item.quantity > 0);
 
@@ -54,13 +93,14 @@ export const Checkout = () => {
       complement: "",
       neighborhood: "",
       city: "",
-      state: "",
+      state: undefined,
       paymentMethod: "credit",
     },
   });
 
   const submit = (data: FormSchema) => {
-    console.log(data);
+    setOrderData(data);
+    navigate("/order");
   };
 
   return (
